@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\HorchiAbla\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\HorchiAbla\\.nuget\\packages"
+    ]
+  }
+}

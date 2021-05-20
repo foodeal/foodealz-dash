@@ -1,0 +1,6 @@
+id;nom;image;PriceBefore;PriceAfter;discount;description;restaurant_id
+1;fromage;;6;3;50%;;2
+2;mozarela;;8;4;50%;;2
+3;ricotta;;4;2;50%;;3
+4;rape;;5;2,5;50%;;1
+5;miel;;30;15;50%;;4
