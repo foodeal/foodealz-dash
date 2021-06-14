@@ -12,20 +12,13 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TableContainer from '@material-ui/core/TableContainer';
 import TablePagination from '@material-ui/core/TablePagination';
-import Typography from '@material-ui/core/Typography';
-import { Link } from "react-router-dom";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { Button, ThemeProvider } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import ClearIcon from '@material-ui/icons/Clear';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
+
 import axios from 'axios';
 import Menuadd from './Menuadd';
 import MenuUpdate from './MenuUpdate';
-import { TextField } from '@material-ui/core';
 import Mapcomponent from "./Mapcomponent";
-import config from '../config';
+import config from '../config.json';
 
 
 const Menu = () => {
@@ -82,7 +75,7 @@ const Menu = () => {
   });
 
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/AllInvendus`;
+    const url = `${config.URL}/AllInvendus`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -165,7 +158,7 @@ const Menu = () => {
   const handleRemove = async (id) => {
     console.log("iddesigné :" + id)
     try {
-      return await axios.delete(`https://api.foodealzapi.com/Invendus/${id}`)
+      return await axios.delete(`${config.URL}/Invendus/${id}`)
     }
 
     catch (error) { console.log("deleting error :" + error) }
@@ -299,7 +292,7 @@ const Menu = () => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[10, 25, 100]}
+              rowsPerPageOptions={[5,10, 25, 100]}
               component="div"
               count={data.data.length}
               rowsPerPage={rowsPerPage}

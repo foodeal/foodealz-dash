@@ -1,33 +1,18 @@
 import React, { useState, useEffect } from "react";
-// import {
-//  UsersCard
-// } from "./pages/Users";
-
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import TableContainer from '@material-ui/core/TableContainer';
-import TablePagination from '@material-ui/core/TablePagination';
-import Typography from '@material-ui/core/Typography';
-import { Link } from "react-router-dom";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { Button, ThemeProvider } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
 import ClearIcon from '@material-ui/icons/Clear';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
 
 import { Dialog } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import config from '../config';
+import config from '../config.json';
 
 
 
@@ -65,6 +50,7 @@ const Dealcomponent = (item) => {
       fontSize: 14,
     },
   }))(TableCell);
+  
   function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
@@ -72,7 +58,7 @@ const Dealcomponent = (item) => {
     setOpen1(true);
   };
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/activedeals`;
+    const url = `${config.URL}/activedeals`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -93,7 +79,7 @@ const Dealcomponent = (item) => {
   const handleRemove = async (id) => {
 
     try {
-      return await axios.delete(`https://api.foodealzapi.com/dealsDel/${id}`).then(() => { console.log("removing done ")})
+      return await axios.delete(`${config.URL}/dealsDel/${id}`).then(() => { console.log("removing done ")})
     }
 
     catch (error) { console.log("deleting error :" + error) }

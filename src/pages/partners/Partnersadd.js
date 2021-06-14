@@ -10,16 +10,11 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import { ContactSupportOutlined, FormatColorReset } from '@material-ui/icons';
-import { useLocation, BrowserRouter as Router, useHistory } from "react-router-dom";
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import { getOverlappingDaysInIntervals } from 'date-fns';
-import config from '../config';
+import config from '../config.json';
 
 
 
@@ -67,23 +62,160 @@ const Partnersadd = (item) => {
     temp: [],
     photo: "",
     error: null,
+    fields: [],
+    errors: [],
     partnerItems: [],
     name: "",
     typePar: "",
+    startinghour: '',
+    expiredhour: '',
     commission_ratePar: "",
     discountPar: ""
   });
+  const [formIsValid, setFormIsValid] = React.useState(false);
 
-  function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }
   const [open, setOpen] = React.useState(false);
-  const [open1, setOpen1] = React.useState(false);
+
   const [open2, setOpen2] = React.useState(false);
+
+  const [open4, setOpen4] = React.useState(false);
 
   const [image, setImage] = useState('')
   const [urlphoto, setUrlphoto] = useState('')
+  const [logo, setLogo] = useState('')
+  const [urllogo, setUrlLogo] = useState('')
   const [loading, setLoading] = useState(FormatColorReset)
+
+  const handleValidation =() =>{
+    const fields= data.fields;
+    const errors={};
+    let formIsValid = true;
+
+       //Name
+       if(!fields["name"]){
+          formIsValid = false;
+          errors["name"] = "name cannot be empty";
+       }     
+             
+       
+
+         //Email
+       if(!fields["mail"]){
+          formIsValid = false;
+          errors["mail"] = "mail cannot be empty";
+       }
+ 
+       if(typeof fields["mail"] !== "undefined"){
+          const lastAtPos = fields["mail"].lastIndexOf('@');
+          const lastDotPos = fields["mail"].lastIndexOf('.');
+
+          if (!(lastAtPos < lastDotPos && lastAtPos > 0 && fields["mail"].indexOf('@@') == -1 && lastDotPos > 2 && (fields["mail"].length - lastDotPos) > 2)) {
+            formIsValid = false;
+             errors["mail"] = "mail is not valid";
+           }
+      }  
+      //Phone
+       if(!fields["phone"]){
+          formIsValid = false;
+          errors["phone"] = "phone cannot be empty";
+       }     
+       if(typeof fields["phone"] !== "undefined"){
+          if(!fields["phone"].match(/^[0-9]+$/) && (fields["phone"].length) >= 8){
+          formIsValid = false;
+             errors["phone"] = "phone incorrect";
+          }        
+       }
+
+        //latitude
+        if(!fields["latitude"]){
+          formIsValid = false;
+          errors["latitude"] = "lat cannot be empty";
+       }     
+       if(typeof fields["latitude"] !== "undefined"){
+          if(!fields["latitude"].match(/^[0-9]+$/) && fields["latitude"].indexOf('.') == -1 ){
+          formIsValid = false;
+             errors["latitude"] = "lat must be float";
+          }        
+       }
+
+        //longitude
+        if(!fields["longitude"]){
+          formIsValid = false;
+          errors["longitude"] = "lng cannot be empty";
+       }     
+       if(typeof fields["longitude"] !== "undefined"){
+          if(!fields["longitude"].match(/^[0-9]+$/) && fields["longitude"].indexOf('.') == -1){
+          formIsValid = false;
+             errors["longitude"] = "lng must be float";
+          }        
+       }
+
+        //address
+        if(!fields["address"]){
+          formIsValid = false;
+          errors["address"] = "address cannot be empty";
+       }  
+
+        //password
+        if(!fields["password"]){
+          formIsValid = false;
+          errors["password"] = "pwd cannot be empty";
+       }  
+
+        //description
+        if(!fields["description"]){
+          formIsValid = false;
+          errors["description"] = " description cannot be empty";
+       }  
+        //site
+        if(!fields["site"]){
+          formIsValid = false;
+          errors["site"] = " site cannot be empty";
+       }  
+      
+
+
+       setData({
+     ...data,
+     errors: errors,
+   });
+
+   return formIsValid;
+
+
+};
+
+const contactSubmit = (e) => {
+  console.log("validation test :")
+    e.preventDefault()
+    if(handleValidation()){
+
+      global();
+      
+  
+          alert("Form submitted  and partner was added, click ok ");
+       }
+       else{
+
+        setOpen4(true);      
+         
+        
+       }
+
+}
+
+
+
+const handleChangee =(field, e) =>{
+    let fields = data.fields;
+    fields[e]=field;
+      setData({
+     ...data,
+     fields: fields,
+   });
+    console.log(fields)
+}
+
 
 
   const handleChange = (event) => {
@@ -112,73 +244,10 @@ const Partnersadd = (item) => {
   });
   console.log("url est :", urlphoto);
 
-  const namechange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      partnerName: e
-    })
-  }
-
-  const mailchange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      partnerMail: e
-    })
-  }
-  const passwordchange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      partnerPassword: e
-    })
-  }
-
-  const descriptionchange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      description: e
-    })
-  }
-  const addresschange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      address: e
-    })
-  }
-  const urlchange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      url: e
-    })
-  }
-  const phonechange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      phone: e
-    })
-  }
-  const latitudechange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      latitude: e
-    })
-  }
-  const longitudechange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      longitude: e
-    })
-  }
-
-  const logourlchange = (e) => {
-    setPartnerdata({
-      ...partnerdata,
-      logourl: e
-    })
-  }
 
 
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/restaurants`;
+    const url = `${config.URL}/restaurants`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -198,20 +267,22 @@ const Partnersadd = (item) => {
   };
 
   const addPartner = () => {
-    axios.post(`https://api.foodealzapi.com/restaurants/register`, {
-      name: partnerdata.partnerName,
-      mail: partnerdata.partnerMail,
-      password: partnerdata.partnerPassword,
-      description: partnerdata.description,
-      address: partnerdata.address,
-      url: partnerdata.url,
-      phone: parseInt(partnerdata.phone),
-      latitude: parseFloat(partnerdata.latitude),
-      longitude: parseFloat(partnerdata.longitude),
+    axios.post(`${global.url}/restaurants/register`, {
+      name: data.fields["name"],
+      mail: data.fields["mail"],
+      password: data.fields["password"],
+      description: data.fields["description"],
+      address: data.fields["address"],
+      url: data.fields["site"],
+      phone: parseInt(data.fields["phone"]),
+      latitude: parseFloat(data.fields["latitude"]),
+      longitude: parseFloat(data.fields["longitude"]),
       type: data.typePar,
       commission_rate: parseFloat(data.commission_ratePar),
-      logourl: partnerdata.logourl,
+      logourl: urllogo,
       image: urlphoto,
+      startinghours: data.startinghour,
+      expiryhours: data.expiredhour,
       discount: data.discountPar
     })
       .then((res) => {
@@ -224,9 +295,7 @@ const Partnersadd = (item) => {
 
   }
 
-  const handleClick = () => {
-    setOpen1(true);
-  };
+
 
 
 
@@ -241,8 +310,7 @@ const Partnersadd = (item) => {
   };
   const global = () => {
     addPartner();
-    handleClose2()
-    handleClick();
+    handleClose2();
     handleClose1();
 
   };
@@ -269,17 +337,41 @@ const Partnersadd = (item) => {
 
   }
 
+  const uploadLogo = async (e) => {
+    const files = e.target.files
+    const dataa = new FormData()
+    dataa.append('file', files[0])
+    dataa.append('upload_preset', 'ablahorchi')
+    setLoading(true)
+    const res = await fetch(
+      '	https://api.cloudinary.com/v1_1/da8pq7gcb/image/upload',
+      {
+        method: 'POST',
+        body: dataa
+      }
+    )
+    const file = await res.json()
+    let uploadedimage = file.url
+    // uploadedimage.push(file);
+    setLogo(file.secure_url)
+    setLoading(false)
+    setUrlLogo(uploadedimage)
+
+  }
 
 
 
 
-  const handleClose = (event, reason) => {
+  
+
+  const handleClose4 = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
 
-    setOpen1(false);
+    setOpen4(false);
   };
+
   const classes = useStyles();
 
   return (
@@ -295,49 +387,66 @@ const Partnersadd = (item) => {
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>name :</p>
             <TextField style={{ marginLeft: '30px', width: '300px', marginTop: '25px', padding: '15px' }}
-              label="name" onChange={e => namechange(e.target.value)} variant="filled" />
+              label="name" name="name" onChange={(e)=> handleChangee(e.target.value,"name")} value={data.fields["name"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["name"]}</span>
+              
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>mail :</p>
             <TextField style={{ marginLeft: '40px', width: '300px', marginTop: '25px', padding: '15px' }}
-              label="mail" onChange={e => mailchange(e.target.value)} variant="filled" />
+              label="mail"  name="mail" onChange={(e)=> handleChangee(e.target.value,"mail")} value={data.fields["mail"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["mail"]}</span>
+            
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>password :</p>
             <TextField style={{ marginLeft: '10px', width: '300px', marginTop: '25px', padding: '15px' }}
-              label="password" onChange={e => passwordchange(e.target.value)} variant="filled" />
+              label="password"  name="password" onChange={(e)=> handleChangee(e.target.value,"password")} value={data.fields["password"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["password"]}</span>
           </div>
 
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>description :</p>
             <TextField style={{ width: '300px', marginTop: '25px', padding: '15px' }}
-              label="description" onChange={e => descriptionchange(e.target.value)} variant="filled" />
+              label="description"  name="description" onChange={(e)=> handleChangee(e.target.value,"description")} value={data.fields["description"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["description"]}</span>
+              
           </div>
           <div className={classes.ligne}>
-            <p style={{ fontSize: '20px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>address :</p>
-            <TextField style={{ marginLeft: '10px',width: '300px',marginTop: '25px',padding: '15px' }}
-              label="address" onChange={e => addresschange(e.target.value)} variant="filled" />
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>address :</p>
+            <TextField style={{ marginLeft: '20px',width: '300px',marginTop: '25px',padding: '15px' }}
+              label="address"  name="address" onChange={(e)=> handleChangee(e.target.value,"address")} value={data.fields["address"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["address"]}</span>
+           
           </div>
           <div className={classes.ligne} >
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>site web :</p>
             <TextField style={{ marginLeft: '20px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="url de site web" onChange={e => urlchange(e.target.value)} variant="filled" />
+              label="url de site web" name="site" onChange={(e)=> handleChangee(e.target.value,"site")} value={data.fields["site"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["site"]}</span>
+            
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>phone :</p>
             <TextField style={{ marginLeft: '30px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="phone" onChange={e => phonechange(e.target.value)} variant="filled" />
+              label="phone" name="phone" onChange={(e)=> handleChangee(e.target.value,"phone")} value={data.fields["phone"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["phone"]}</span>
+              
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>latitude :</p>
             <TextField style={{ marginLeft: '20px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="latitude" onChange={e => latitudechange(e.target.value)} variant="filled" />
+              label="latitude" name="latitude" onChange={(e)=> handleChangee(e.target.value,"latitude")} value={data.fields["latitude"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["latitude"]}</span>
+              
           </div>
 
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>longitude :</p>
             <TextField style={{ marginLeft: '10px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="longitude" onChange={e => longitudechange(e.target.value)} variant="filled" />
+              label="longitude" name="longitude" onChange={(e)=> handleChangee(e.target.value,"longitude")} value={data.fields["longitude"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["longitude"]}</span>
+              
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '30px' }}>type :</p>
@@ -380,28 +489,89 @@ const Partnersadd = (item) => {
             </FormControl>
           </div>
           <div className={classes.ligne}>
-            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>logo :</p>
-            <TextField style={{ marginLeft: '30px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="logo url" onChange={e => logourlchange(e.target.value)} variant="filled" />
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '40px' }}>logo :</p>
+            <input 
+            style={{marginLeft:"70px", marginTop:"40px"}}
+            type="file"
+              name="file"
+              placeholder="Upload an image"
+              onChange={(e) => { uploadLogo(e) }}
+            />
+            {
+              loading ? (
+                <h3 style={{marginLeft:"20px", marginTop:"30px"}}> Logo....</h3>
+              ) : (
+                <img src={logo} style={{ width: '100px' }} />
+              )
+            }
           </div>
 
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '15px', marginRight: '50px' }}>image :</p>
-            <input type="file"
+            <input 
+            style={{marginLeft:"10px", marginTop:"20px"}}
+            type="file"
               name="file"
               placeholder="Upload an image"
               onChange={(e) => { uploadImage(e) }}
             />
             {
               loading ? (
-                <h3>Loading....</h3>
+                <h3 style={{marginLeft:"20px" }}> Image....</h3>
               ) : (
                 <img src={image} style={{ width: '100px' }} />
               )
             }
-            {/* <TextField style={Field}
-              label="image" onChange={e => imagechange(e.target.value)} variant="filled" /> */}
+           
           </div>
+
+          <div className={classes.ligne}>
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>starting hour :</p>
+            <form className={classes.container} noValidate>
+              <TextField
+                style={{ marginTop: '40px', marginLeft: '40px' }}
+                id="time1"
+                name="starting_hour"
+               
+                type="time"
+                defaultValue={data.startinghour}
+                
+                onChange={event => { console.log(event.target.value), setData({ ...data, startinghour: event.target.value }) }}
+                className={classes.textField}
+
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  step: 300, // 5 min
+                }}
+              />
+           
+            </form>
+          </div>
+          <div className={classes.ligne}>
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>expired hour :</p>
+            <form className={classes.container} noValidate>
+              <TextField
+                style={{ marginTop: '40px', marginLeft: '40px' }}
+                id="time2"
+                name="expired_hour"
+                type="time"
+                defaultValue={data.expiredhour}
+                
+                onChange={event => { console.log(event.target.value), setData({ ...data, expiredhour: event.target.value }) }}
+                className={classes.textField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  step: 300, // 5 min
+                }}
+              />
+              
+            </form>
+          </div>
+
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '30px' }}>discount :</p>
             <FormControl style={{marginLeft:'20px'}} variant="filled" className={classes.formControl}>
@@ -429,6 +599,7 @@ const Partnersadd = (item) => {
             </FormControl>
           </div>
 
+         
         </DialogContent>
         <DialogActions>
           <Button style={{ backgroundColor: '#008037', borderRadius: '5px', marginLeft: '20px' }} onClick={handleClose1} >
@@ -451,33 +622,18 @@ const Partnersadd = (item) => {
           <Button onClick={handleClose2} color="primary">
             No
 </Button>
-          <Button onClick={() => global()} color="primary" >
+          <Button onClick={(e) => contactSubmit(e)} color="primary" >
             Yes
 </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar open={open1} autoHideDuration={1000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success">
-          partner is successfully added!
-</Alert>
-      </Snackbar>
+    
+      <Snackbar open={open4} autoHideDuration={3000} onClose={handleClose4} message="There are invalid forms!" />
+       
 
         </DialogActions>
       </Dialog>
      
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     </div>
 

@@ -10,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TableContainer from '@material-ui/core/TableContainer';
 import TablePagination from '@material-ui/core/TablePagination';
+import config from '../config.json';
 // import {csv} from "d3";
 const TestCSV = () => {
 
@@ -52,7 +53,7 @@ const TestCSV = () => {
     }))(TableRow);
 
     const addArray = () => {
-        axios.post(`entrer url`, data.result)
+        axios.post(`${config.URL}/restaurants/Multiadd`, data.result)
           .then((res) => {
             console.log("add done");
           })

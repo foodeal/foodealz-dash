@@ -27,7 +27,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import config from '../config';
+import config from '../config.json';
 
 
 const Offrescomponent = (item) => {
@@ -68,7 +68,7 @@ const Offrescomponent = (item) => {
   const handleRemove = async (id) => {
     console.log("iddesigné :" + id)
     try {
-      return await axios.delete( `https://api.foodealzapi.com/dealscheduled/${id}`)
+      return await axios.delete( `${config.URL}/dealscheduled/${id}`)
     }
 
     catch (error) { console.log("deleting error :" + error) }

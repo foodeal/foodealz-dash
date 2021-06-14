@@ -69,6 +69,8 @@ const Signin = () => {
     error: '',
     error: null,
     search: null,
+    firstname:"",
+    lastname:"",
     username: "",
     password: "",
     mail: ""
@@ -85,13 +87,21 @@ const Signin = () => {
   }
   const controle = async () => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    if (data.username == "" || data.password == "") {
+    if (data.username == "" || data.password == "" ) {
       setOpen1(true)
     }
     else if (reg.test(data.username) === false) {
       setOpen2(true)
 
     }
+    // else if (reg.test(data.firstname) === false) {
+    //   setOpen2(true)
+
+    // }
+    // else if (reg.test(data.lastname) === false) {
+    //   setOpen2(true)
+
+    // }
     else {
       axios
         .post(`https://api.foodealzapi.com/Admin/login`, {

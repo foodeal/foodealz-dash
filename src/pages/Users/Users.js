@@ -15,7 +15,7 @@ import { Button } from '@material-ui/core';
 import axios from 'axios';
 import { TextField } from '@material-ui/core';
 import { CropLandscapeOutlined } from "@material-ui/icons";
-import config from '../config';
+import config from '../config.json';
 
 const Users = () => {
     const [data, setData] = React.useState({
@@ -74,7 +74,7 @@ const Users = () => {
     
     
       const getData = async () => {
-        const url = `https://api.foodealzapi.com/users`;
+        const url = `${config.URL}/users`;
     
         await fetch(url)
           .then(res => res.json())

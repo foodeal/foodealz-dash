@@ -1,7 +1,7 @@
 
 import React, { useState , useEffect} from "react";
 import {GoogleMap, withScriptjs, withGoogleMap, Marker, InfoWindow} from "react-google-maps";
-
+import config from '../config.json';
 
 
 
@@ -19,7 +19,7 @@ const PartnersMaps = () => {
 
       });
       const getData = async () => {
-        const url = `https://api.foodealzapi.com/restaurants`;
+        const url = `${config.URL}/restaurants`;
         await fetch(url)
           .then(res => res.json())
           .then(res => {

@@ -29,7 +29,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Offrescomponent from "./Offrescomponent";
-import config from '../config';
+import config from '../config.json';
 
 const Offres = () => {
 
@@ -113,7 +113,7 @@ const useStyles = makeStyles({
   }, [])
 
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/deals`;
+    const url = `${config.URL}/deals`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -138,7 +138,7 @@ const useStyles = makeStyles({
   const handleRemove = async (id) => {
     
     try {
-      return await axios.delete(`https://api.foodealzapi.com/dealscheduled/${id}`)
+      return await axios.delete(`${config.URL}/dealscheduled/${id}`)
     }
     
 

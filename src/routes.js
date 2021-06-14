@@ -16,12 +16,12 @@ import {
   Menu,
   Deals,
   Billing,
-  TestValide,
-  TestCSV,
+  // TestValide,
+  // TestCSV,
   PartnersCSV,
-  OffresCSV,
+  // OffresCSV,
   MenuCSV,
-  DealsCSV,
+  // DealsCSV,
   PartnersMaps,
   UsersMap,
   // Cards,
@@ -37,34 +37,11 @@ import {
   // Google,
   GridList,
   Home,
-  // Invoice,
-  // Leaflet,
-  // Lists,
-  // Lockscreen,
-  // Media,
-  // Menus,
-  // Messages,
-  // NotFound,
-  // Paper,
   PasswordReset,
-  // Pickers,
-  // PricingPage,
-  // Products,
-  // Progress,
-  // SelectionControls,
-   Selects,
+  AddAdmin,
+  Selects,
   Signin,
-  // Signup,
-  // Snackbars,
-  // Social,
-  // Steppers,
-  // Tables,
-  // Tabs,
-  // Taskboard,
-  // TextFields,
-  // TimelinePage,
-  // Tooltips,
-  // Widgets
+  
 } from './pages';
 
 import AppsIcon from '@material-ui/icons/Apps';
@@ -73,6 +50,8 @@ import BookmarkIcon from '@material-ui/icons/Bookmark';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 // Icons
 import ExploreIcon from '@material-ui/icons/Explore';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+
 import FastfoodIcon from '@material-ui/icons/Fastfood';
 import PermIdentityIcon from '@material-ui/icons/PermIdentity';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
@@ -100,236 +79,7 @@ export default {
       icon: ExploreIcon,
       component: Home
     },
-    // {
-    //   path: '/Dashbord/apps',
-    //   name: 'Apps',
-    //   type: 'submenu',
-    //   icon: AppsIcon,
-    //   // badge: {
-    //   //   type: 'primary',
-    //   //   value: '5'
-    //   // },
-    //   children: [
-    //     {
-    //       path: '/calendar',
-    //       name: 'Calendar',
-    //       component: Calendar
-    //     },
-        // {
-        //   path: '/media',
-        //   name: 'Media',
-        //   component: Media
-        // },
-        // {
-        //   path: '/messages',
-        //   name: 'Messages',
-        //   component: Messages
-        // },
-        // {
-        //   path: '/social',
-        //   name: 'Social',
-        //   component: Social
-        // },
-        // {
-        //   path: '/chat',
-        //   name: 'Chat',
-        //   component: Chat
-        // }
-    //   ]
-    // },
-    // {
-    //   path: '/widgets',
-    //   name: 'Widgets',
-    //   type: 'link',
-    //   icon: PhotoIcon,
-    //   component: Widgets
-    // },
-    // {
-    //   path: '/material',
-    //   name: 'Material',
-    //   type: 'submenu',
-    //   icon: EqualizerIcon,
-    //   // badge: {
-    //   //   type: 'error',
-    //   //   value: '10'
-    //   // },
-    //   children: [
-    //     // {
-    //     //   path: '/appbar',
-    //     //   name: 'App Bar',
-    //     //   component: AppBar
-    //     // },
-    //     // {
-    //     //   path: '/autocomplete',
-    //     //   name: 'Auto Complete',
-    //     //   component: Autocomplete
-    //     // },
-    //     // {
-    //     //   path: '/avatars',
-    //     //   name: 'Avatars',
-    //     //   component: Avatars
-    //     // },
-    //     // {
-    //     //   path: '/badges',
-    //     //   name: 'Badges',
-    //     //   component: Badges
-    //     // },
-    //     // {
-    //     //   path: '/button-navigation',
-    //     //   name: 'Button Navigation',
-    //     //   component: ButtonNavigation
-    //     // },
-    //     // {
-    //     //   path: '/buttons',
-    //     //   name: 'Buttons',
-    //     //   component: Buttons
-    //     // },
-    //     // {
-    //     //   path: '/cards',
-    //     //   name: 'Cards',
-    //     //   component: Cards
-    //     // },
-    //     // {
-    //     //   path: '/chips',
-    //     //   name: 'Chips',
-    //     //   component: Chips
-    //     // },
-    //     // {
-    //     //   path: '/dialogs',
-    //     //   name: 'Dialogs',
-    //     //   component: Dialogs
-    //     // },
-    //     // {
-    //     //   path: '/dividers',
-    //     //   name: 'Dividers',
-    //     //   component: Dividers
-    //     // },
-    //     // {
-    //     //   path: '/drawers',
-    //     //   name: 'Drawers',
-    //     //   component: Drawers
-    //     // },
-    //     // 
-    //     // {
-    //     //   path: '/expansion-panels',
-    //     //   name: 'Expansion Panels',
-    //     //   component: ExpansionPanels
-    //     // },
-    //     // {
-    //       //   path: '/grid-list',
-    //       //   name: 'Grid List',
-    //       //   component: GridList
-    //       // },
-    //     // {
-    //     //   path: '/lists',
-    //     //   name: 'Lists',
-    //     //   component: Lists
-    //     // },
-    //     // {
-    //     //   path: '/menus',
-    //     //   name: 'Menus',
-    //     //   component: Menus
-    //     // },
-    //     // {
-    //     //   path: '/paper',
-    //     //   name: 'Paper',
-    //     //   component: Paper
-    //     // },
-    //     // {
-    //     //   path: '/pickers',
-    //     //   name: 'Pickers',
-    //     //   component: Pickers
-    //     // },
-    //     // {
-    //     //   path: '/progress',
-    //     //   name: 'Progress',
-    //     //   component: Progress
-    //     // },
-    //     // {
-    //     //   path: '/selection-controls',
-    //     //   name: 'Selection Controls',
-    //     //   component: SelectionControls
-    //     // },
-    //     // {
-    //     //   path: '/selects',
-    //     //   name: 'Selects',
-    //     //   component: Selects
-    //     // },
-    //     // {
-    //     //   path: '/snackbars',
-    //     //   name: 'Snackbars',
-    //     //   component: Snackbars
-    //     // },
-    //     // {
-    //     //   path: '/steppers',
-    //     //   name: 'Steppers',
-    //     //   component: Steppers
-    //     // },
-    //     // {
-    //     //   path: '/tables',
-    //     //   name: 'Tables',
-    //     //   component: Tables
-    //     // },
-    //     // {
-    //     //   path: '/tabs',
-    //     //   name: 'Tabs',
-    //     //   component: Tabs
-    //     // },
-    //     // {
-    //     //   path: '/text-fields',
-    //     //   name: 'Text Fields',
-    //     //   component: TextFields
-    //     // },
-    //     // {
-    //     //   path: '/tooltips',
-    //     //   name: 'Tooltips',
-    //     //   component: Tooltips
-    //     // }
-    //   ]
-    // },
-    // {
-    //   path: '/editor',
-    //   name: 'Editor',
-    //   type: 'link',
-      // icon: Looks3Icon,
-    //   component: Editor
-    // },
-    // {
-    //   path: '/ecommerce',
-    //   name: 'Ecommerce',
-    //   type: 'submenu',
-    //   icon: Looks4Icon,
-    //   // badge: {
-    //   //   type: 'secondary',
-    //   //   value: 'N'
-    //   // },
-    //   children: [
-    //     // {
-    //     //   path: '/products',
-    //     //   name: 'Products',
-    //     //   component: Products
-    //     // },
-    //     // {
-    //     //   path: '/detail',
-    //     //   name: 'Detail',
-    //     //   component: Detail
-    //     // }
-    //   ]
-    // },
-    // {
-    //   path: '/taskboard',
-    //   name: 'Taskboard',
-    //   type: 'link',
-    //   icon: ViewColumnIcon,
-    //   component: Taskboard
-    // },
-    // {
-    //   path: '/charts',
-    //   name: 'Charts',
-    //   type: 'link',
-    //   icon: ShowChartIcon,
-    //   component: Charts
-    // },
+    
     {
       path: '/maps',
       name: 'Maps',
@@ -349,20 +99,20 @@ export default {
       ]
     },
 
-    {
-      path: '/valide',
-      name: 'testValide',
-      type: 'submenu',
-      icon: NavigationIcon,
-      children: [
-        {
-          path: '/testValide',
-          name: 'test valide',
-          component: TestValide
-        },
+    // {
+    //   path: '/valide',
+    //   name: 'testValide',
+    //   type: 'submenu',
+    //   icon: NavigationIcon,
+    //   children: [
+    //     {
+    //       path: '/testValide',
+    //       name: 'test valide',
+    //       component: TestValide
+    //     },
         
-      ]
-    },
+    //   ]
+    // },
     {
       path: '/Partners',
       name: 'Partenaires',
@@ -397,11 +147,11 @@ export default {
           name: 'Offres actives',
           component: Offres
         },
-        {
-          path: '/OffresCSV',
-          name: 'Offres actives (CSV)',
-          component: OffresCSV
-        },
+        // {
+        //   path: '/OffresCSV',
+        //   name: 'Offres actives (CSV)',
+        //   component: OffresCSV
+        // },
         // {
         //   path: '/leaflet',
         //   name: 'Leaflet',
@@ -420,11 +170,11 @@ export default {
           name: 'Offres',
           component: Deals
         },
-        {
-          path: '/DealsCSV',
-          name: 'Offres (CSV)',
-          component: DealsCSV
-        },
+        // {
+        //   path: '/DealsCSV',
+        //   name: 'Offres (CSV)',
+        //   component: DealsCSV
+        // },
        
       ]
     },
@@ -444,6 +194,21 @@ export default {
         //   name: 'Leaflet',
         //   component: Leaflet
         // }
+      ]
+    },
+
+    {
+      path: '/Admin',
+      name: 'Administrateurs',
+      type: 'submenu',
+      icon: SupervisorAccountIcon,
+      children: [
+        {
+          path: '/AddAdmin',
+          name: 'Add Admin',
+          component: AddAdmin
+        },
+        
       ]
     },
 
@@ -506,24 +271,24 @@ export default {
         // }
       ]
     },
-    {
-      path: '/TestCSV',
-      name: 'TestCSV',
-      type: 'submenu',
-      icon: CompareArrowsIcon,
-      children: [
-        {
-          path: '/TestCSV',
-          name: 'TestCSV',
-          component: TestCSV
-        },
-        // {
-        //   path: '/leaflet',
-        //   name: 'Leaflet',
-        //   component: Leaflet
-        // }
-      ]
-    },
+    // {
+    //   path: '/TestCSV',
+    //   name: 'TestCSV',
+    //   type: 'submenu',
+    //   icon: CompareArrowsIcon,
+    //   children: [
+    //     {
+    //       path: '/TestCSV',
+    //       name: 'TestCSV',
+    //       component: TestCSV
+    //     },
+    //     // {
+    //     //   path: '/leaflet',
+    //     //   name: 'Leaflet',
+    //     //   component: Leaflet
+    //     // }
+    //   ]
+    // },
     // {
     //   path: '/pages',
     //   name: 'Pages',

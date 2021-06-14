@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
-import { Link } from "react-router-dom";
 import { Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
-import Baskets from "./Menu";
-import { useLocation, BrowserRouter as Router, useHistory } from "react-router-dom";
-import Moment from 'moment';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import { ContactSupportOutlined, FormatColorReset } from '@material-ui/icons';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -16,11 +12,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Dialog } from '@material-ui/core';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import config from '../config';
+import config from '../config.json';
+
 const Title1 = {
   fontSize: '30px',
   color: '#008037',
@@ -72,10 +67,22 @@ const Menuadd = (item) => {
     data: [],
     temp: [],
     error: null,
+    fields: [],
+    errors: [],
+    partnerselected: '',
+    partnerlist: [],
+    partnerChoisie: [],
+    partnerId: "",
     items: [],
     discountPer:''
 
   });
+
+  const [partneridselected, setPartneridselected] = useState('')
+  const [partenaireId, setPartenaireId] = useState(0)
+  const [image, setImage] = useState('')
+  const [urlphoto, setUrlphoto] = useState('')
+  const [loading, setLoading] = useState(FormatColorReset)
   const handleChange = (event) => {
     const name = event.target.name;
     setData({
@@ -96,44 +103,7 @@ const Menuadd = (item) => {
 
   });
 
-  const nomchange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      nom: e
-    })
-  }
-  //  }
-  const imagechange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      image: e
-    })
-  }
-  const pricebeforechange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      PriceBeforeDiscount: e
-    })
-  }
-  const priceafterchange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      PriceAfterDiscoun: e
-    })
-  }
  
-  const descriptionchange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      description: e
-    })
-  }
-  const idrestaurantchange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      restaurant_id: e
-    })
-  }
 
 
 
@@ -141,19 +111,150 @@ const Menuadd = (item) => {
   const [open1, setOpen1] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
 
-  const handleClick = () => {
-    setOpen1(true);
-  };
+  const [open4, setOpen4] = React.useState(false);
+
+ 
 
   const handleClose2 = () => {
     setOpen2(false);
 
   };
 
+  const handleValidation =() =>{
+    const fields= data.fields;
+    const errors={};
+    let formIsValid = true;
+
+    
+
+        //priceBefore
+        if(!fields["priceBefore"]){
+          formIsValid = false;
+          errors["priceBefore"] = "lat cannot be empty";
+       }     
+       if(typeof fields["priceBefore"] !== "undefined"){
+          if(!fields["priceBefore"].match(/^[0-9]+$/) && fields["priceBefore"].indexOf('.') == -1 ){
+          formIsValid = false;
+             errors["priceBefore"] = "price must be float";
+          }        
+       }
+
+        //priceAfter
+        if(!fields["priceAfter"]){
+          formIsValid = false;
+          errors["priceAfter"] = "lng cannot be empty";
+       }     
+       if(typeof fields["priceAfter"] !== "undefined"){
+          if(!fields["priceAfter"].match(/^[0-9]+$/) && fields["priceAfter"].indexOf('.') == -1){
+          formIsValid = false;
+             errors["priceAfter"] = "price must be float";
+          }        
+       }
+
+        //nom
+        if(!fields["nom"]){
+          formIsValid = false;
+          errors["nom"] = "nom cannot be empty";
+       }  
+
+        //description
+        if(!fields["description"]){
+          formIsValid = false;
+          errors["description"] = "description cannot be empty";
+       }  
+
+       
+
+
+       setData({
+     ...data,
+     errors: errors,
+   });
+
+   return formIsValid;
+
+
+};
+
+const contactSubmit = (e) => {
+  console.log("validation test :")
+    e.preventDefault()
+    if(handleValidation()){
+
+      // setOpen3(true);
+      global();
+  
+          alert("Form submitted and menu was added , click ok ");
+       }
+       else{
+
+        setOpen4(true);      
+          // alert("Form has errors. click ok and correct items")
+        
+       }
+
+}
+
+
+
+const handleChangee =(field, e) =>{
+    let fields = data.fields;
+    fields[e]=field;
+      setData({
+     ...data,
+     fields: fields,
+   });
+    console.log(fields)
+}
+
+
+
+const handleClose4 = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
+  }
+
+  setOpen4(false);
+};
+
+const ChangePartner = (e) => {
+  let newdataa = data.partnerlist.filter(item => { return item.name == e })
+  setPartneridselected(e)
+  setPartenaireId(parseInt(newdataa[0].restaurant_id))
+  
+  setData({
+    ...data,
+    partnerselected:e ,
+    partnerChoisie: newdataa,
+
+  })
+
+}
+
+  const uploadImage = async (e) => {
+    const files = e.target.files
+    const dataa = new FormData()
+    dataa.append('file', files[0])
+    dataa.append('upload_preset', 'ablahorchi')
+    setLoading(true)
+    const res = await fetch(
+      '	https://api.cloudinary.com/v1_1/da8pq7gcb/image/upload',
+      {
+        method: 'POST',
+        body: dataa
+      }
+    )
+    const file = await res.json()
+    let uploadedimage = file.url
+    // uploadedimage.push(file);
+    setImage(file.secure_url)
+    setLoading(false)
+    setUrlphoto(uploadedimage)
+
+  }
   const global = () => {
     addBasket();
     handleClose2();
-    handleClick();
     handleClose1 ();
   };
   const handleClose1 = () => {
@@ -169,7 +270,7 @@ const Menuadd = (item) => {
     setOpen1(false);
   };
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/AllInvendus`;
+    const url = `${config.URL}/AllInvendus`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -193,17 +294,41 @@ const Menuadd = (item) => {
         })
       })
   };
+  const getPartner = async () => {
+    const url = `${config.URL}/restaurants`;
+    await fetch(url)
+      .then(res => res.json())
+
+      .then(res => {
+        console.log("resultat est :", res)
+        setData({
+          ...data,
+          partnerlist: res,
+        });
+      })
+
+
+      .catch(error => {
+        setData({
+          ...data,
+          error: 'Error Loading content',
+        })
+      })
+
+  };
+
+
   const addBasket = () => {
     
-    axios.post(`https://api.foodealzapi.com/Invendu/register`, {
+    axios.post(`${config.URL}/Invendu/register`, {
 
-      nom: basketdata.nom,
-      image: basketdata.image,
-      PriceBeforeDiscount: basketdata.PriceBeforeDiscount,
-      PriceAfterDiscoun: basketdata.PriceAfterDiscoun,
+      nom: data.fields["nom"],
+      image: urlphoto,
+      PriceBeforeDiscount: data.fields["priceBefore"],
+      PriceAfterDiscoun: data.fields["priceAfter"],
       discount: data.discountPer,
-      description: basketdata.description,
-      restaurant_id: basketdata.restaurant_id,
+      description: data.fields["description"],
+      restaurant_id: parseInt(partenaireId),
 
 
     }
@@ -219,12 +344,16 @@ const Menuadd = (item) => {
   }
 
   const classes = useStyles();
+  const bouttonaddoffre = () => {
+    getPartner();
+    setOpen(true);
+  }
 
 
 
   return (
     <div >
-      <Button style={{backgroundColor: '#008037', borderRadius: '5px', marginLeft:'20px'}} variant="outline-success" onClick={() => setOpen(true)} >add Menu </Button>
+      <Button style={{backgroundColor: '#008037', borderRadius: '5px', marginLeft:'20px'}} variant="outline-success" onClick={() => bouttonaddoffre()} >add Menu </Button>
       <Dialog
         open={open}
         onClose={handleClose1}
@@ -240,31 +369,45 @@ const Menuadd = (item) => {
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop:'50px' }}>  nom:</p>
 
             <TextField  style={{ marginLeft: '50px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="nom" defaultValue={data.resto} onChange={e => nomchange(e.target.value)} variant="filled" />
+              label="nom" defaultValue={data.resto} name="nom" onChange={(e)=> handleChangee(e.target.value,"nom")} value={data.fields["nom"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["nom"]}</span>
 
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop:'50px' }}> image :</p>
 
-            <TextField  style={{ marginLeft: '30px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="url de l'image" defaultValue={data.donner} onChange={e => imagechange(e.target.value)} variant="filled" />
+            <input
+            style={{marginLeft:"50px", marginTop:"50px"}}
+             type="file"
+              name="file"
+              placeholder="Upload an image"
+              onChange={(e) => { uploadImage(e) }}
+            />
+            {
+              loading ? (
+                <h3  style={{marginLeft:"20px", marginTop:"40px"}}> Image....</h3>
+              ) : (
+                <img src={image} style={{ width: '100px' }} />
+              )
+            }
 
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop:'50px' }}> price before</p>
 
             <TextField  style={{ width: '300px',marginTop: '25px',padding: '15px'}}
-              label="price before" defaultValue={data.item1} onChange={e => pricebeforechange(e.target.value)} variant="filled" />
-
+              label="price before" defaultValue={data.item1} name="priceBefore" onChange={(e)=> handleChangee(e.target.value,"priceBefore")} value={data.fields["priceBefore"]} variant="filled" />
+<span style={{color: "red"}}>{data.errors["priceBefore"]}</span>
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop:'50px' }}> price after :</p>
             <TextField  style={{ width: '300px',marginTop: '25px',padding: '15px'}}
-              label="price after" defaultValue={data.item4} onChange={e => priceafterchange(e.target.value)} variant="filled" />
+              label="price after" defaultValue={data.item4} name="priceAfter" onChange={(e)=> handleChangee(e.target.value,"priceAfter")} value={data.fields["priceAfter"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["priceAfter"]}</span>
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop:'30px' }}> discount :</p>
-            <FormControl style={{marginLeft:'30px'}} variant="filled" className={classes.formControl}>
+            <FormControl style={{marginLeft:'25px'}} variant="filled" className={classes.formControl}>
               <InputLabel htmlFor="filled-age-native-simple">discount</InputLabel>
               <Select
                 native
@@ -292,12 +435,32 @@ const Menuadd = (item) => {
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop:'50px' }}> description :</p>
             <TextField  style={{ width: '300px',marginTop: '25px',padding: '15px'}}
-              label="description" defaultValue={data.item3} onChange={e => descriptionchange(e.target.value)} variant="filled" />
+              label="description" defaultValue={data.item3} name="description" onChange={(e)=> handleChangee(e.target.value,"description")} value={data.fields["description"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["description"]}</span>
           </div>
           <div className={classes.ligne}>
-            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop:'50px' }}> id partner :</p>
-            <TextField  style={{width: '300px',marginTop: '25px',padding: '15px'}}
-              label="id partner" defaultValue={data.item5} onChange={e => idrestaurantchange(e.target.value)} variant="filled" />
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '30px' }}>partner_id :</p>
+            <FormControl style={{ marginLeft: '20px' }} variant="filled" className={classes.formControl}>
+
+              <Select
+                native
+                value={partneridselected}      
+                onChange={val => { ChangePartner(val.target.value) }}
+             
+                inputProps={{
+                  name: 'partnerId',
+                  id: 'filled-age-native-simple3',
+                }}
+              >
+                <option aria-label="None" value="" />
+                {
+                  data.partnerlist.map(item => {
+                    return <option value={item.name}>{item.name}</option>
+                  })
+                }
+
+              </Select>
+            </FormControl>
           </div>
 
 
@@ -324,26 +487,19 @@ const Menuadd = (item) => {
           <Button onClick={handleClose2} color="primary">
             No
 </Button>
-          <Button onClick={() => global()} color="primary" >
+          <Button onClick={(e) => contactSubmit(e)} color="primary" >
             Yes
 </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar open={open1} autoHideDuration={1000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success">
-          Menu is successfully added!
-</Alert>
-      </Snackbar>
+     
+      <Snackbar open={open4} autoHideDuration={3000} onClose={handleClose4} message="There are invalid forms!" />
 
 
         </DialogActions>
       </Dialog>
 
-      <Snackbar open={open1} autoHideDuration={1000} onClose={handleClose}>
-      <Alert onClose={handleClose} severity="success">
-        basket is successfully added!
-</Alert>
-    </Snackbar>
+    
 
 
 

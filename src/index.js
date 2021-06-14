@@ -28,18 +28,18 @@ import Menuadd from "./pages/Menu/Menuadd";
 import MenuUpdate from "./pages/Menu/MenuUpdate";
 import MenuCSV from "./pages/Menu/MenuCSV";
 import Partners from "./pages/partners/Partners";
-
+import AddAdmin from "./pages/Administrateur/AddAdmin";
 import PartnersUpdate from "./pages/partners/PartnersUpdate";
 import Partnersadd from "./pages/partners/Partnersadd";
 import Offres from "./pages/Offres/Offres";
 import OffresUpdate from "./pages/Offres/OffresUpdate";
 import Offresadd from "./pages/Offres/Offresadd";
-import OffresCSV from "./pages/Offres/OffresCSV";
-import TestCSV from "./pages/testCSV/TestCSV";
-import TestValide from "./pages/TestValide/TestValide";
+// import OffresCSV from "./pages/Offres/OffresCSV";
+// import TestCSV from "./pages/testCSV/TestCSV";
+// import TestValide from "./pages/TestValide/TestValide";
 import PartnersCSV from'./pages/partners/PartnersCSV';
 import Deals from"./pages/Deals/Deals";
-import DealsCSV from"./pages/Deals/DealsCSV";
+// import DealsCSV from"./pages/Deals/DealsCSV";
 import Controle from "./Controle";
 
 render(

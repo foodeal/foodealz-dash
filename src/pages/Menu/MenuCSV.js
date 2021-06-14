@@ -11,6 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TableContainer from '@material-ui/core/TableContainer';
 import TablePagination from '@material-ui/core/TablePagination';
+import config from '../config.json';
 // import {csv} from "d3";
 const TestCSV = () => {
 
@@ -55,7 +56,7 @@ const TestCSV = () => {
     }))(TableRow);
 
     const addArray = () => {
-        axios.post(`https://prod.foodealzapi.com/Invendus/MultiAdd`, data.result)
+        axios.post(`${config.URL}/Invendus/MultiAdd`, data.result)
           .then((res) => {
             console.log("add done");
           })

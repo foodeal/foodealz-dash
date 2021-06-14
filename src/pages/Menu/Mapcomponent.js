@@ -3,32 +3,21 @@ import React, { useState, useEffect } from "react";
 //  UsersCard
 // } from "./pages/Users";
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
+
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import TableContainer from '@material-ui/core/TableContainer';
-import TablePagination from '@material-ui/core/TablePagination';
-import Typography from '@material-ui/core/Typography';
-import { Link } from "react-router-dom";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { Button, ThemeProvider } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
 import ClearIcon from '@material-ui/icons/Clear';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
-import Menuadd from './Menuadd';
-import MenuUpdate from './MenuUpdate';
 import { Dialog } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import config from '../config';
+import config from '../config.json';
+
 
 
 const Mapcomponent = (item) => {
@@ -69,7 +58,7 @@ const Mapcomponent = (item) => {
   const handleRemove = async (id) => {
     console.log("iddesigné :" + id)
     try {
-      return await axios.delete(`https://api.foodealzapi.com/Invendus/${id}`)
+      return await axios.delete(`${config.URL}/Invendus/${id}`)
     }
 
     catch (error) { console.log("deleting error :" + error) }

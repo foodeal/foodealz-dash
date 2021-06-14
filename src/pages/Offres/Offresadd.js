@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import { Button } from '@material-ui/core';
-import {useForm} from 'react-hook-form';
-import {yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup' ;
 import axios from 'axios';
 import { Dialog } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -14,12 +11,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import moment from 'moment';
-import config from '../config';
+import config from '../config.json';
+
+
 
 
 const Title1 = {
@@ -57,6 +53,8 @@ const Offresadd = (item) => {
     temp: [],
     error: null,
     activity: '',
+    fields: [],
+    errors: [],
     dealselected: '',
     partnerselected: '',
     deallist: [],
@@ -64,12 +62,17 @@ const Offresadd = (item) => {
     dealChoisie: [],
     partnerChoisie: [],
     partnerId: "",
-    discountPar: "",
-    startingdate: '',
-    expireddate: '',
-    startinghour: '',
-    expiredhour: ''
+    discountPar: ""
+   
   });
+  
+  const [partneridselected, setPartneridselected] = useState('')
+  const [partenaireId, setPartenaireId] = useState(0)
+  const [partnerstarting, setPartnerstarting] = useState('')
+  const [partnerexpired, setPartnerexpired] = useState('')
+  const [dealstarting, setDealstarting] = useState('')
+  const [dealexpired, setDealexpired] = useState('')
+
   const handleChange = (event) => {
     const name = event.target.name;
     setData({
@@ -81,15 +84,94 @@ const Offresadd = (item) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
   const [open, setOpen] = React.useState(false);
-  const [open1, setOpen1] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
+  const [open3, setOpen3] = React.useState(false);
+  const [open4, setOpen4] = React.useState(false);
 
+  const handleValidation =() =>{
+    const fields= data.fields;
+    const errors={};
+    let formIsValid = true;
+
+          
+       
+
+      //quantity
+       if(!fields["quantity"]){
+          formIsValid = false;
+          errors["quantity"] = "qt cannot be empty";
+       }     
+       if(typeof fields["quantity"] !== "undefined"){
+          if(!fields["quantity"].match(/^[0-9]+$/)){
+          formIsValid = false;
+             errors["quantity"] = "qt must be only numbers";
+          }        
+       }
+
+         //quantitySold
+         if(!fields["quantitySold"]){
+          formIsValid = false;
+          errors["quantitySold"] = "qtSold cannot be empty";
+       }     
+       if(typeof fields["quantitySold"] !== "undefined"){
+          if(!fields["quantitySold"].match(/^[0-9]+$/)){
+          formIsValid = false;
+             errors["quantitySold"] = "qtSold must be only numbers";
+          }        
+       }
+
+       
+
+       setData({
+     ...data,
+     errors: errors,
+   });
+
+   return formIsValid;
+
+
+};
+
+const contactSubmit = (e) => {
+  console.log("validation test :")
+    e.preventDefault()
+    if(handleValidation()){
+
+      
+      global();
   
+          alert("Form submitted and offer was added , click ok ");
+       }
+       else{
+
+        setOpen4(true);      
+          
+        
+       }
+
+}
  
 
-  const handleClick = () => {
-    setOpen1(true);
-  };
+
+const handleClose4 = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
+  }
+
+  setOpen4(false);
+};
+
+
+const handleChangee =(field, e) =>{
+  let fields = data.fields;
+  fields[e]=field;
+    setData({
+   ...data,
+   fields: fields,
+ });
+  console.log( "les champs sont:" ,fields)
+}
+
 
   const useStyles = makeStyles((theme) => ({
     ligne: {
@@ -120,40 +202,23 @@ const Offresadd = (item) => {
     quantity: "",
     nbre_redeemed_deal: "",
     dealid: null,
-    PartnerId: null
-
+    PartnerId: null,
+   
   });
 
 
-
-  const qtchange = (e) => {
-    setOffredata({
-      ...offredata,
-      quantity: e
-    })
-  }
-  const offresoldchange = (e) => {
-    setOffredata({
-      ...offredata,
-      nbre_redeemed_deal: e
-    })
-  }
   const dealidchange = (e) => {
     setOffredata({
       ...offredata,
       dealid: e
     })
   }
-  // const changeidpartner = (e) => {
-  //   setOffredata({
-  //     ...offredata,
-  //     PartnerId: e
-  //   })
-  //   getDeal(parseInt(e))
-  // }
+ 
 
   const ChangeDeal = (e) => {
     let newdata = data.deallist.filter(item => { return item.description == e })
+    setDealstarting(newdata[0].startingdate)
+    setDealexpired(newdata[0].expirydate)
     setData({
       ...data,
       dealselected: e,
@@ -173,6 +238,11 @@ const Offresadd = (item) => {
 
   const ChangePartner = (e) => {
     let newdataa = data.partnerlist.filter(item => { return item.name == e })
+    setPartneridselected(e)
+    setPartenaireId(parseInt(newdataa[0].restaurant_id))
+    setPartnerstarting(newdataa[0].startinghours)
+    setPartnerexpired(newdataa[0].expiryhours)
+    console.log(parseInt(newdataa[0].restaurant_id))
     
     setData({
       ...data,
@@ -188,7 +258,7 @@ const Offresadd = (item) => {
   console.log("le nom est :",data.partnerselected);
 
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/deals`;
+    const url = `${config.URL}/deals`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -207,7 +277,7 @@ const Offresadd = (item) => {
       })
   };
   const getDeal = async (id) => {
-    const url = `https://api.foodealzapi.com/activedeals`;
+    const url = `${config.URL}/activedeals`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -225,7 +295,7 @@ const Offresadd = (item) => {
       })
   };
   const getPartner = async () => {
-    const url = `https://api.foodealzapi.com/restaurants`;
+    const url = `${config.URL}/restaurants`;
     await fetch(url)
       .then(res => res.json())
 
@@ -250,23 +320,22 @@ const Offresadd = (item) => {
   console.log("les partenaires sont :", JSON.stringify(data.partnerlist));
 
   const addOffre = () => {
-    console.log(offredata.PartnerId);
+    console.log(partenaireId);
 
-    axios.post(`https://api.foodealzapi.com/deals/dealscheduled`, {
-      restaurant_id: parseInt(offredata.PartnerId),
-      quantity: parseInt(offredata.quantity),
-      nbre_redeemed_deal: parseInt(offredata.nbre_redeemed_deal),
-      startingdate: data.startingdate,
-      expirydate: data.expireddate,
-      startingdate_hours: data.startinghour,
-      expirydate_hours: data.expiredhour,
+    axios.post(`${config.URL}/deals/dealscheduled`, {
+      restaurant_id: parseInt(partenaireId),
+      quantity: parseInt( data.fields["quantity"]),
+      nbre_redeemed_deal: parseInt( data.fields["quantitySold"]),
+      startingdate: dealstarting ,
+      expirydate:  dealexpired ,
+      startingdate_hours: partnerstarting,
+      expirydate_hours: partnerexpired,
       active: data.activity,
-      deal_id: parseInt(offredata.dealid),
-
+      deal_id: parseInt(offredata.dealid)
     })
       .then((res) => {
 
-        getData();
+        console.log(res)
       })
       .catch(error => {
         console.log("l'erreur d'ajout est :", error)
@@ -287,7 +356,6 @@ const Offresadd = (item) => {
   const global = () => {
     addOffre();
     handleClose2();
-    handleClick();
     handleClose1();
 
   };
@@ -296,13 +364,7 @@ const Offresadd = (item) => {
     getPartner();
     setOpen(true);
   }
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen1(false);
-  };
+  
   const classes = useStyles();
  
 
@@ -325,11 +387,11 @@ const Offresadd = (item) => {
 
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '30px' }}>partner_id :</p>
-            <FormControl style={{ marginLeft: '30px' }} variant="filled" className={classes.formControl}>
+            <FormControl style={{ marginLeft: '40px' }} variant="filled" className={classes.formControl}>
 
               <Select
                 native
-                value={data.partnerselected}      
+                value={partneridselected}      
                 onChange={val => { ChangePartner(val.target.value) }}
              
                 inputProps={{
@@ -349,7 +411,7 @@ const Offresadd = (item) => {
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '30px' }}>deals list :</p>
-            <FormControl style={{ marginLeft: '40px' }} variant="filled" className={classes.formControl}>
+            <FormControl style={{ marginLeft: '60px' }} variant="filled" className={classes.formControl}>
               <Select
                 native
                 value={data.dealselected}
@@ -373,109 +435,44 @@ const Offresadd = (item) => {
          
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>quantity :</p>
-            <input type="text" label="quantity" placeholder="enter total quantity"  ref={register}/>
-            {/* <TextField style={{ marginLeft: '20px', width: '300px', marginTop: '25px', padding: '15px' }}
-              name="quantityy"  onChange={e => qtchange(e.target.value)} variant="filled"  ref={register} /> */}
-            {/* <p>{error.quantityy?.message}</p> */}
+            <TextField style={{ marginLeft: '45px',width: '300px',marginTop: '25px',padding: '15px'}}
+              label="quantity" name="quantity" onChange={(e)=> handleChangee(e.target.value,"quantity")} value={data.fields["quantity"]} variant="filled" />
+               <span style={{color: "red"}}>{data.errors["quantity"]}</span>
+           
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>quantity sold :</p>
-            <input type="text" label="quantity Sold" placeholder="enter quantity sold"  ref={register}/>
-            {/* <TextField style={{ width: '300px', marginTop: '25px', padding: '15px' }}
-              name="quantity_Sold"  onChange={e => offresoldchange(e.target.value)} variant="filled"  ref={register} /> */}
-              {/* <p>{error.quantity_Sold.message}</p> */}
+            
+               <TextField style={{ marginLeft: '15px',width: '300px',marginTop: '25px',padding: '15px'}}
+              label="quantity sold"  name="quantitySold" onChange={(e)=> handleChangee(e.target.value,"quantitySold")} value={data.fields["quantitySold"]} variant="filled" />
+               <span style={{color: "red"}}>{data.errors["quantitySold"]}</span>
+           
           </div>
          
           <div className={classes.ligne}>
-            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>starting date :</p>
-            <form className={classes.container} noValidate>
-              <TextField
-                style={{ marginTop: '40px', marginLeft: '40px' }}
-                id="date1"
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }} >starting date :</p>
+            <TextField style={{ marginLeft: '20px', width: '300px', marginTop: '25px', padding: '15px' }}
+              label="starting date" disabled variant="filled" value={dealstarting} />
+          </div >
 
-                label="starting date"
-                type="datetime-local"
-                name="starting_date"
-                
-                value={data.startingdate}
-              
-                onChange={event => { console.log(event.target.value), setData({ ...data, startingdate: event.target.value }) }}
-
-                className={classes.textField}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-             
-            </form>
-          </div>
-          <div className={classes.ligne} >
-            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>expired date :</p>
-            <form className={classes.container} noValidate>
-              <TextField
-                style={{ marginTop: '40px', marginLeft: '40px' }}
-                id="date2"
-                label="expired date"
-                type="datetime-local"
-                name="expired_date"
-               
-                defaultValue={data.expireddate}
-                
-                onChange={event => { console.log(event.target.value), setData({ ...data, expireddate: event.target.value }) }}
-                className={classes.textField}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              
-            </form>
-          </div>
           <div className={classes.ligne}>
-            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>starting hour :</p>
-            <form className={classes.container} noValidate>
-              <TextField
-                style={{ marginTop: '40px', marginLeft: '40px' }}
-                id="time1"
-                name="starting_hour"
-               
-                type="time"
-                defaultValue={data.startinghour}
-                
-                onChange={event => { console.log(event.target.value), setData({ ...data, startinghour: event.target.value }) }}
-                className={classes.textField}
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }} >expired date :</p>
+            <TextField style={{ marginLeft: '20px', width: '300px', marginTop: '25px', padding: '15px' }}
+              label="expired date" disabled variant="filled" value={dealexpired} />
+          </div >
 
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                inputProps={{
-                  step: 300, // 5 min
-                }}
-              />
-           
-            </form>
-          </div>
           <div className={classes.ligne}>
-            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>expired hour :</p>
-            <form className={classes.container} noValidate>
-              <TextField
-                style={{ marginTop: '40px', marginLeft: '40px' }}
-                id="time2"
-                name="expired_hour"
-                type="time"
-                defaultValue={data.expiredhour}
-                
-                onChange={event => { console.log(event.target.value), setData({ ...data, expiredhour: event.target.value }) }}
-                className={classes.textField}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                inputProps={{
-                  step: 300, // 5 min
-                }}
-              />
-              
-            </form>
-          </div>
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }} >starting hour :</p>
+            <TextField style={{ marginLeft: '20px', width: '300px', marginTop: '25px', padding: '15px' }}
+              label="starting hour" disabled variant="filled" value={partnerstarting} />
+          </div >
+
+          <div className={classes.ligne}>
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }} >expired hour :</p>
+            <TextField style={{ marginLeft: '20px', width: '300px', marginTop: '25px', padding: '15px' }}
+              label="expired hour" disabled variant="filled" value={partnerexpired} />
+          </div >
+
           
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '30px' }}> active or not :</p>
@@ -529,16 +526,13 @@ const Offresadd = (item) => {
               <Button onClick={handleClose2} color="primary">
                 No
 </Button>
-              <Button onClick={() => global()} color="primary" >
+              <Button onClick={(e) => contactSubmit(e)} color="primary" >
                 Yes
 </Button>
             </DialogActions>
           </Dialog>
-          <Snackbar open={open1} autoHideDuration={1000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="success">
-              offre is successfully added!
-</Alert>
-          </Snackbar>
+          {/* <Snackbar open={open3} autoHideDuration={8000} onClose={handleClose3} message=" All Forms are Valid and offer is added " /> */}
+      <Snackbar open={open4} autoHideDuration={3000} onClose={handleClose4} message="There are invalid forms!" />
         </DialogActions>
       </Dialog>
 

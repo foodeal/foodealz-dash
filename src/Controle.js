@@ -7,23 +7,24 @@ import Users from "./pages/Users/Users";
 import Menuadd from "./pages/Menu/Menuadd";
 import MenuUpdate from "./pages/Menu/MenuUpdate";
 import MenuCSV from "./pages/Menu/MenuCSV";
-import OffresCSV from "./pages/Offres/OffresCSV";
+// import OffresCSV from "./pages/Offres/OffresCSV";
 import Partners from "./pages/partners/Partners";
+import AddAdmin from "./pages/Administrateur/AddAdmin";
 import PartnersUpdate from "./pages/partners/PartnersUpdate";
 import Partnersadd from "./pages/partners/Partnersadd";
 import Offres from "./pages/Offres/Offres";
-import TestValide from "./pages/TestValide/TestValide";
-import TestCSV from "./pages/testCSV/TestCSV";
+// import TestValide from "./pages/TestValide/TestValide";
+// import TestCSV from "./pages/testCSV/TestCSV";
 import PartnersCSV from'./pages/partners/PartnersCSV';
 import OffresUpdate from "./pages/Offres/OffresUpdate";
 import Offresadd from "./pages/Offres/Offresadd";
-import DealsCSV from"./pages/Deals/DealsCSV";
+// import DealsCSV from"./pages/Deals/DealsCSV";
 import Deals from"./pages/Deals/Deals";
 import {
     Home,
     Menu,
-    PasswordReset,
-    Signin
+    Signin,
+    UsersMap
   } from "./pages";
   import { BrowserRouter, Route, Switch } from "react-router-dom";
   
@@ -111,10 +112,12 @@ const Controle = () => {
           <Route exact path="/PartnersUpdate" component={PartnersUpdate} />
           <Route exact path="/Partnersadd" component={Partnersadd} />
           <Route exact path="/Deals" component={Deals} />
-          <Route exact path="/DealsCSV" component={DealsCSV} />
+          {/* <Route exact path="/DealsCSV" component={DealsCSV} /> */}
           <Route exact path="/Menu" component={Menu} />
-          <Route exact path="/TestCSV" component={TestCSV} />
-          <Route exact path="/TestValide" component={TestValide} />
+          {/* <Route exact path="/TestCSV" component={TestCSV} /> */}
+          <Route exact path="/AddAdmin" component={AddAdmin} />
+          <Route exact path="/UsersMap" component={UsersMap}/>
+          {/* <Route exact path="/TestValide" component={TestValide} /> */}
           <Route exact path="/PartnersCSV" component={PartnersCSV} />
           <Route exact path="/Menuadd" component={Menuadd} />
           <Route exact path="/MenuUpdate" component={MenuUpdate} />
@@ -122,7 +125,7 @@ const Controle = () => {
           <Route exact path="/Offres" component={Offres} />
           <Route exact path="/Offresadd" component={Offresadd} />
           <Route exact path="/OffresUpdate" component={OffresUpdate} />
-          <Route exact path="/OffresCSV" component={OffresCSV} />
+          {/* <Route exact path="/OffresCSV" component={OffresCSV} /> */}
           {/* <Route path="/" component={Dashboard} /> */}
         </Switch>
         :

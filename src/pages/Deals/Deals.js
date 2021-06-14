@@ -12,25 +12,14 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import Typography from '@material-ui/core/Typography';
-import { Link } from "react-router-dom";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import ClearIcon from '@material-ui/icons/Clear';
 import axios from 'axios';
 import moment from 'moment';
 import Dealadd from './Dealadd';
 import DealUpdate from './DealUpdate';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Dealcomponent from "./Dealcomponent";
-import config from '../config';
+import config from '../config.json';
+
 
 
 const Deals = () => {
@@ -119,7 +108,7 @@ const Deals = () => {
   
 
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/activedeals`;
+    const url = `${config.URL}/activedeals`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -146,7 +135,7 @@ const Deals = () => {
   const handleRemove = async (id) => {
    
 try{
-   return await axios.delete(`https://api.foodealzapi.com/dealsDel/${id}`)
+   return await axios.delete(`${config.URL}/dealsDel/${id}`)
 
 }
 

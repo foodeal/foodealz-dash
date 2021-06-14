@@ -5,8 +5,9 @@ import TableCell from '@material-ui/core/TableCell';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
-import Moment from 'moment';
+
 import { useLocation, BrowserRouter as Router, useHistory } from "react-router-dom";
+import { ContactSupportOutlined, FormatColorReset } from '@material-ui/icons';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -14,12 +15,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Dialog } from '@material-ui/core';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
+
 import EditIcon from '@material-ui/icons/Edit';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import config from '../config';
+import config from '../config.json';
+
 
 
 const Title1 = {
@@ -52,6 +53,7 @@ const MenuUpdate = (item) => {
     error: '',
     data: [],
     temp: [],
+    errors: [],
     discountPer:"",
     error: null,
     donner: item.item.id,
@@ -62,20 +64,16 @@ const MenuUpdate = (item) => {
     item5: item.item.discount,
     item6: item.item.description,
     item7: item.item.restaurant_id,
+    fields: [{ "priceBefore": item.item.PriceBeforeDiscount, "priceAfter": item.item.PriceAfterDiscoun , "discount": item.item.discount}],
     
-
-
-
-
   });
+  console.log("les champs initiales sont", data.fields)
 
-  const handleChange = (event) => {
-    const name = event.target.name;
-    setData({
-      ...data,
-      [name]: event.target.value,
-    });
-  };
+  const [image, setImage] = useState('')
+  const [urlphoto, setUrlphoto] = useState('')
+  const [loading, setLoading] = useState(FormatColorReset)
+
+ 
   const useStyles = makeStyles((theme) => ({
     ligne: {
       display: 'flex',
@@ -90,9 +88,29 @@ const MenuUpdate = (item) => {
     },
   }));
 
-  const handleClick = () => {
-    setOpen1(true);
-  };
+  const uploadImage = async (e) => {
+    const files = e.target.files
+    const dataa = new FormData()
+    dataa.append('file', files[0])
+    dataa.append('upload_preset', 'ablahorchi')
+    setLoading(true)
+    const res = await fetch(
+      '	https://api.cloudinary.com/v1_1/da8pq7gcb/image/upload',
+      {
+        method: 'POST',
+        body: dataa
+      }
+    )
+    const file = await res.json()
+    let uploadedimage = file.url
+    // uploadedimage.push(file);
+    setImage(file.secure_url)
+    setLoading(false)
+    setUrlphoto(uploadedimage)
+
+  }
+
+ 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -109,7 +127,7 @@ const MenuUpdate = (item) => {
   
   const [basketdata, setBasketdata] = React.useState({
     nom: data.item1,
-    image: data.item2,
+    image: urlphoto,
     PriceBeforeDiscount: data.item3,
     PriceAfterDiscoun: data.item4,
    
@@ -118,49 +136,7 @@ const MenuUpdate = (item) => {
 
 
   });
-  const nomchange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      nom: e
-    })
-  }
-  //  }
-  const imagechange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      image: e
-    })
-  }
-  const pricebeforechange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      PriceBeforeDiscount: e
-    })
-  }
-  const priceafterchange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      PriceAfterDiscoun: e
-    })
-  }
- 
-  const descriptionchange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      description: e
-    })
-  }
-  const idrestaurantchange = (e) => {
-    setBasketdata({
-      ...basketdata,
-      restaurant_id: e
-    })
-  }
-
-
-  function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }
+  
 
   const handleClose2 = () => {
     setOpen2(false);
@@ -170,7 +146,6 @@ const MenuUpdate = (item) => {
   const global = (id) => {
     handleEdit(id);
     handleClose2();
-    handleClick();
     handleClose1();
   };
   const handleClose1 = () => {
@@ -180,7 +155,129 @@ const MenuUpdate = (item) => {
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
+  const [open3, setOpen3] = React.useState(false);
+  const [open4, setOpen4] = React.useState(false);
 
+  const handleValidation =() =>{
+    
+    const list = [{ "priceBefore": data.item3.toString(), "priceAfter":data.item4.toString(), "discount":data.item5 }]
+    const fields = list[0];
+    const errors={};
+    let formIsValid = true;
+
+    
+
+         //priceBefore
+         if(!fields.priceBefore){
+          formIsValid = false;
+          errors["priceBefore"] = "lat cannot be empty";
+       }     
+       if(typeof fields.priceBefore !== "undefined"){
+          if(!fields.priceBefore.match(/^[0-9]+$/) && fieldspriceBefore.indexOf('.') == -1 ){
+          formIsValid = false;
+             errors["priceBefore"] = "price must be float";
+          }        
+       }
+
+        //priceAfter
+        if(!fields.priceAfter){
+          formIsValid = false;
+          errors["priceAfter"] = "lng cannot be empty";
+       }     
+       if(typeof fields.priceAfter !== "undefined"){
+          if(!fields.priceAfter.match(/^[0-9]+$/) && fields.priceAfter.indexOf('.') == -1){
+          formIsValid = false;
+             errors["priceAfter"] = "price must be float";
+          }        
+       } 
+
+        //priceAfter
+        if(!fields.discount){
+          formIsValid = false;
+          errors["discount"] = "discount cannot be empty";
+       } 
+
+
+       setData({
+     ...data,
+     errors: errors,
+   });
+
+   return formIsValid;
+
+
+};
+
+const contactSubmit = (e) => {
+  console.log("validation test :")
+    e.preventDefault()
+    if(handleValidation()){
+
+      
+      global(data.donner);
+  
+          alert("Form submitted and menu was updated , click ok ");
+       }
+       else{
+
+        setOpen4(true);      
+   
+        
+       }
+
+}
+
+
+
+const handleChangee =(field, e) =>{
+  let diclist = []
+
+  if (e == "priceBefore") {
+    let list = [{ "priceBefore": field, "priceAfter": data.item4.toString(), "discount":data.item5 }]
+    diclist.push(list)
+    setData({
+      ...data,
+      fields: diclist,
+      item3: parseFloat(field)
+    });
+  } else if(e == "priceAfter")  {
+    let list = [{ "priceBefore": data.item3.toString(), "priceAfter": field, "discount":data.item5}]
+    diclist.push(list)
+    setData({
+      ...data,
+      fields: diclist,
+      item4: parseFloat(field)
+
+    });
+}
+else if(e == "discount")  {
+  let list = [{ "priceBefore": data.item3.toString(), "priceAfter": data.item4.toString(), "discount":field}]
+  diclist.push(list)
+  setData({
+    ...data,
+    fields: diclist,
+    item5: field
+
+  });
+}
+console.log(data.fields)
+}
+
+const handleClose3 = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
+  }
+
+  setOpen3(false);
+};
+
+const handleClose4 = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
+  }
+
+  setOpen4(false);
+};
 
   const StyledTableCell = withStyles((theme) => ({
     head: {
@@ -193,7 +290,7 @@ const MenuUpdate = (item) => {
   }))(TableCell);
   
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/AllInvendus`;
+    const url = `${config.URL}/AllInvendus`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -220,14 +317,11 @@ const MenuUpdate = (item) => {
   const handleEdit = (id) => {
 
 
-    axios.put(`https://api.foodealzapi.com/Invendus/${id}`, {
-      nom: basketdata.nom,
-      image: basketdata.image,
-      PriceBeforeDiscount: basketdata.PriceBeforeDiscount,
-      PriceAfterDiscoun: basketdata.PriceAfterDiscoun,
-      discount: data.discountPer,
-      description: basketdata.description,
-      restaurant_id: basketdata.restaurant_id,
+    axios.put(`${config.URL}/Invendus/${id}`, {
+
+      PriceBeforeDiscount: data.item3,
+      PriceAfterDiscoun: data.item4,
+      discount: data.item5,
 
     })
 
@@ -255,37 +349,22 @@ const MenuUpdate = (item) => {
           onClose={handleClose1}
 
         >
-          <DialogTitle >Enter new Menu</DialogTitle>
+          <DialogTitle >Update Menu</DialogTitle>
           <DialogContent>
-            {/* <DialogContentText>
-            hello world
-          </DialogContentText> */}
-
-            <div className={classes.ligne}>
-              <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>  nom:</p>
-
-              <TextField  style={{ marginLeft: '60px',width: '300px',marginTop: '25px',padding: '15px'}}
-                label="nom" defaultValue={data.item1} onChange={e => nomchange(e.target.value)} variant="filled" />
-
-            </div>
-            <div className={classes.ligne}>
-              <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}> image :</p>
-
-              <TextField  style={{ marginLeft: '50px',width: '300px',marginTop: '25px',padding: '15px'}}
-                label="url de l'image" defaultValue={data.item2} onChange={e => imagechange(e.target.value)} variant="filled" />
-
-            </div>
+           
             <div className={classes.ligne}>
               <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}> price before</p>
 
               <TextField  style={{ marginLeft: '20px',width: '300px',marginTop: '25px',padding: '15px'}}
-                label="price before" defaultValue={data.item3} onChange={e => pricebeforechange(e.target.value)} variant="filled" />
-
+                label="price before" defaultValue={data.fields[0].priceBefore}  name="priceBefore" onChange={(e)=> handleChangee(e.target.value,"priceBefore")} value={data.fields.priceBefore} variant="filled" />
+<span style={{color: "red"}}>{data.errors["priceBefore"]}</span>
             </div>
             <div className={classes.ligne}>
               <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}> price after :</p>
               <TextField  style={{ marginLeft: '20px',width: '300px',marginTop: '25px',padding: '15px'}}
-                label="price after" defaultValue={data.item4} onChange={e => priceafterchange(e.target.value)} variant="filled" />
+                label="price after" defaultValue={data.fields[0].priceAfter}  name="priceAfter" onChange={(e)=> handleChangee(e.target.value,"priceAfter")} value={data.fields.priceAfter
+                } variant="filled" />
+                <span style={{color: "red"}}>{data.errors["priceAfter"]}</span>
             </div>
             <div className={classes.ligne}>
               <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '30px' }}> discount :</p>
@@ -293,8 +372,9 @@ const MenuUpdate = (item) => {
                 <InputLabel ht mlFor="filled-age-native-simple">discount</InputLabel>
                 <Select
                   native
-                  value={data.discountPer}
-                  onChange={handleChange}
+                  value={data.fields.discount}
+                  defaultValue={data.fields[0].discount}
+                  onChange={(e) =>handleChangee(e.target.value, "discount")}
                   inputProps={{
                     name: 'discountPer',
                     id: 'filled-age-native-simple',
@@ -314,16 +394,6 @@ const MenuUpdate = (item) => {
               </FormControl>
             </div>
 
-            <div className={classes.ligne}>
-              <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}> description :</p>
-              <TextField  style={{ marginLeft: '20px',width: '300px',marginTop: '25px',padding: '15px'}}
-                label="description" defaultValue={data.item6} onChange={e => descriptionchange(e.target.value)} variant="filled" />
-            </div>
-            <div className={classes.ligne}>
-              <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}> id partner :</p>
-              <TextField  style={{ marginLeft: '20px',width: '300px',marginTop: '25px',padding: '15px'}}
-                label="id restaurant" defaultValue={data.item7} onChange={e => idrestaurantchange(e.target.value)} variant="filled" />
-            </div>
 
 
 
@@ -351,24 +421,22 @@ const MenuUpdate = (item) => {
           <Button onClick={handleClose2} color="primary">
             No
 </Button>
-          <Button onClick={() =>global(data.donner)} color="primary" >
+          <Button onClick={(e) => contactSubmit(e)} color="primary" >
             Yes
 </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar open={open1} autoHideDuration={1000} onClose={handleClose}>
+      {/* <Snackbar open={open1} autoHideDuration={1000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success">
           Menu is successfully updated!
 </Alert>
-      </Snackbar>
+      </Snackbar> */}
           </DialogActions>
         </Dialog>
 
-        <Snackbar open={open1} autoHideDuration={1000} onClose={handleClose}>
-      <Alert onClose={handleClose} severity="success">
-        basket is successfully updated!
-</Alert>
-    </Snackbar>
+        {/* <Snackbar open={open3} autoHideDuration={8000} onClose={handleClose3} message=" All Forms are Valid and menu is updated " /> */}
+      <Snackbar open={open4} autoHideDuration={3000} onClose={handleClose4} message="There are invalid forms!" />
+
 
         
 

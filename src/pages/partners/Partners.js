@@ -1,8 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-// import {
-//  UsersCard
-// } from "./pages/Users";
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -12,24 +9,16 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import Typography from '@material-ui/core/Typography';
-import { Link } from "react-router-dom";
+
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import ClearIcon from '@material-ui/icons/Clear';
+
 import axios from 'axios';
 import Partnersadd from './Partnersadd';
 import PartnersUpdate from './PartnersUpdate';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+
 import Partnercomponent from "./Partnercomponent";
-import config from '../config';
+import config from '../config.json';
+
 
 
 const Partners = () => {
@@ -58,7 +47,7 @@ const Partners = () => {
     setPage(0);
   };
  
-  const [visible, setVisible] = React.useState(false);
+ 
 
   const StyledTableCell = withStyles((theme) => ({
     head: {
@@ -118,7 +107,7 @@ const Partners = () => {
   
 
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/restaurants`;
+    const url = `${config.URL}/restaurants`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -147,7 +136,7 @@ const Partners = () => {
   const handleRemove = async (id) => {
    
 try{
-   return await axios.delete(`https://api.foodealzapi.com/restaurants/${id}`)
+   return await axios.delete(`${global.url}/restaurants/${id}`)
 
 }
 
@@ -227,7 +216,7 @@ catch (error) { console.log("deleting error :" + error) }
                   <StyledTableCell style={{ alignItems: 'center' }} align="right">partnerPhone</StyledTableCell>
                   <StyledTableCell style={{ alignItems: 'center' }} align="right">Paiement</StyledTableCell>
 
-                  {/* <StyledTableCell style={{ alignItems: 'center' }} align="right">partnerPassword</StyledTableCell> */}
+                 
                   <StyledTableCell style={{ alignItems: 'center' }} align="right">description</StyledTableCell>
                   <StyledTableCell style={{ alignItems: 'center' }} align="right">address</StyledTableCell>
                   <StyledTableCell style={{ alignItems: 'center' }} align="right"> site web</StyledTableCell>
@@ -237,10 +226,10 @@ catch (error) { console.log("deleting error :" + error) }
                   <StyledTableCell style={{ alignItems: 'center' }} align="right">commission rate </StyledTableCell>
                   <StyledTableCell style={{ alignItems: 'center' }} align="right">logourl </StyledTableCell>
                   <StyledTableCell style={{ alignItems: 'center' }} align="right">image </StyledTableCell>
-                  {/* <StyledTableCell style={{ alignItems: 'center' }} align="right">accessToken </StyledTableCell>
-                  <StyledTableCell style={{ alignItems: 'center' }} align="right">refreshToken </StyledTableCell> */}
+                  <StyledTableCell style={{ alignItems: 'center' }} align="right">starting hour </StyledTableCell>
+                  <StyledTableCell style={{ alignItems: 'center' }} align="right">close hour </StyledTableCell>
                   <StyledTableCell style={{ alignItems: 'center' }} align="right">discount </StyledTableCell>
-                  {/* <StyledTableCell style={{ alignItems: 'center' }} align="right">deal </StyledTableCell> */}
+                  
                   <StyledTableCell style={{ alignItems: 'center' }} align="right"> </StyledTableCell>
                   <StyledTableCell style={{ alignItems: 'center' }} align="right"> </StyledTableCell>
                 </TableRow>
@@ -268,9 +257,7 @@ catch (error) { console.log("deleting error :" + error) }
                       <StyledTableCell align="right">
                         {item.phone}
                       </StyledTableCell>
-                      {/* <StyledTableCell align="right">
-                  {item.password}
-                </StyledTableCell> */}
+                     
                       <StyledTableCell align="right">
                         {item.typePayment}
                       </StyledTableCell>
@@ -301,18 +288,16 @@ catch (error) { console.log("deleting error :" + error) }
                       <StyledTableCell align="right">
                         {item.image}
                       </StyledTableCell>
-                      {/* <StyledTableCell align="right">
-                        {item.accessToken}
+                      <StyledTableCell align="right">
+                        {item.startinghours}
                       </StyledTableCell>
                       <StyledTableCell align="right">
-                        {item.refreshToken}
-                      </StyledTableCell> */}
+                        {item.expiryhours}
+                      </StyledTableCell>
                       <StyledTableCell align="right">
                         {item.discount}
                       </StyledTableCell>
-                      {/* <StyledTableCell align="right">
-                        {item.deal}
-                      </StyledTableCell> */}
+                    
                     
                     <StyledTableCell align="right">
                       <PartnersUpdate item={item} handleClose={handleClose} handleClose1={handleClose1} />

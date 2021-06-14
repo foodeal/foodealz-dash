@@ -9,19 +9,11 @@ import MuiAlert from '@material-ui/lab/Alert';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { ContactSupportOutlined } from '@material-ui/icons';
-import { useLocation, BrowserRouter as Router, useHistory } from "react-router-dom";
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import {  FormatColorReset } from '@material-ui/icons';
+import {  makeStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import { getOverlappingDaysInIntervals } from 'date-fns';
-import config from '../config';
-
-
+import config from '../config.json';
 
 
 const Title1 = {
@@ -65,6 +57,8 @@ const Dealadd = (item) => {
     error: '',
     data: [],
     temp: [],
+    fields: [],
+    errors: [],
     invenduselected: '',
     partnerselected:'',
     Invendulist:[],
@@ -82,12 +76,21 @@ const Dealadd = (item) => {
     expireddate:""
   });
 
-  function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }
+  
+
+  const [partneridselected, setPartneridselected] = useState('')
+  const [partenaireId, setPartenaireId] = useState(0)
+  const [partnerstarting, setPartnerstarting] = useState('')
+  const [partnerexpired, setPartnerexpired] = useState('')
+
   const [open, setOpen] = React.useState(false);
   const [open1, setOpen1] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
+  const [open4, setOpen4] = React.useState(false);
+
+  const [image, setImage] = useState('')
+  const [urlphoto, setUrlphoto] = useState('')
+  const [loading, setLoading] = useState(FormatColorReset)
 
 
 
@@ -109,70 +112,145 @@ const Dealadd = (item) => {
 
   });
 
-  const imagechange = (e) => {
-    setDealdata({
-      ...dealdata,
-      imageurl: e
-    })
-  }
-  const discountchange = (e) => {
-    setDealdata({
-      ...dealdata,
-      discount: e
-    })
+
+  const handleValidation =() =>{
+    const fields= data.fields;
+    const errors={};
+    let formIsValid = true;
+
+    
+
+        //priceBefore
+        if(!fields["priceBefore"]){
+          formIsValid = false;
+          errors["priceBefore"] = "lat cannot be empty";
+       }     
+       if(typeof fields["priceBefore"] !== "undefined"){
+          if(!fields["priceBefore"].match(/^[0-9]+$/) && fields["priceBefore"].indexOf('.') == -1 ){
+          formIsValid = false;
+             errors["priceBefore"] = "price must be float";
+          }        
+       }
+
+        //priceAfter
+        if(!fields["priceAfter"]){
+          formIsValid = false;
+          errors["priceAfter"] = "lng cannot be empty";
+       }     
+       if(typeof fields["priceAfter"] !== "undefined"){
+          if(!fields["priceAfter"].match(/^[0-9]+$/) && fields["priceAfter"].indexOf('.') == -1){
+          formIsValid = false;
+             errors["priceAfter"] = "price must be float";
+          }        
+       }
+
+        //description
+        if(!fields["description"]){
+          formIsValid = false;
+          errors["description"] = "description cannot be empty";
+       }  
+
+        //dealDescription
+        if(!fields["dealDescription"]){
+          formIsValid = false;
+          errors["dealDescription"] = "description cannot be empty";
+       }  
+
+       
+
+
+       setData({
+     ...data,
+     errors: errors,
+   });
+
+   return formIsValid;
+
+
+};
+
+const contactSubmit = (e) => {
+  console.log("validation test :")
+    e.preventDefault()
+    if(handleValidation()){
+      global();
+      
+  
+          alert("Form submitted and deal was added , click ok ");
+       }
+       else{
+
+        setOpen4(true);      
+          // alert("Form has errors. click ok and correct items")
+        
+       }
+
+}
+
+
+
+const handleChangee =(field, e) =>{
+    let fields = data.fields;
+    fields[e]=field;
+      setData({
+     ...data,
+     fields: fields,
+   });
+    console.log(fields)
+}
+
+
+
+const handleClose4 = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
   }
 
-  const afterchange = (e) => {
-    setDealdata({
-      ...dealdata,
-      PriceAfterDiscount: e
-    })
-  }
-  const beforechange = (e) => {
-    setDealdata({
-      ...dealdata,
-      PriceBeforeDiscount: e
-    })
-  }
+  setOpen4(false);
+};
 
-  const descriptionchange = (e) => {
-    setDealdata({
-      ...dealdata,
-      description: e
-    })
-  }
-  const dealdescrichange = (e) => {
-    setDealdata({
-      ...dealdata,
-      deal_description: e
-    })
-  }
  
  
-  // const changeidpartner = (e) => {
-  //   setData({
-  //     ...data,
-  //     restaurant: e
-  //   })
-  //   getInvendu(parseInt(e))
 
-  // }
+  const uploadImage = async (e) => {
+    const files = e.target.files
+    const dataa = new FormData()
+    dataa.append('file', files[0])
+    dataa.append('upload_preset', 'ablahorchi')
+    setLoading(true)
+    const res = await fetch(
+      '	https://api.cloudinary.com/v1_1/da8pq7gcb/image/upload',
+      {
+        method: 'POST',
+        body: dataa
+      }
+    )
+    const file = await res.json()
+    let uploadedimage = file.url
+    // uploadedimage.push(file);
+    setImage(file.secure_url)
+    setLoading(false)
+    setUrlphoto(uploadedimage)
+
+  }
   const ChangePartner = (e) => {
     let newdataa = data.partnerlist.filter(item => { return item.name == e })
     console.log("le nom est :",e);
-    
+    setPartneridselected(e)
+    setPartenaireId(parseInt(newdataa[0].restaurant_id))
+    console.log(parseInt(newdataa[0].restaurant_id))
+    setPartnerstarting(newdataa[0].startinghours)
+    setPartnerexpired(newdataa[0].expiryhours)
     setData({
       ...data,
-      partnerselected:e ,
-      partnerChoisie: newdataa,
-
+      partnerChoisie: newdataa
     })
 
     getInvendu(parseInt( newdataa[0].restaurant_id));
     console.log("item is :", newdataa[0].restaurant_id);
 
   }
-  console.log('le nom de partner est :', data.partnerselected);
+  console.log('le nom de partner est :',partneridselected);
  
   const ChangeInvendu = (e) => {
     let newdata = data.Invendulist.filter(item =>{return item.nom  == e})
@@ -195,7 +273,7 @@ const Dealadd = (item) => {
   }
 
   const getData = async () => {
-    const url = `https://api.foodealzapi.com/activedeals` ;
+    const url = `${config.URL}/activedeals` ;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -214,7 +292,7 @@ const Dealadd = (item) => {
       })
   };
   const getInvendu = async (id) => {
-    const url = `https://api.foodealzapi.com/Invendus/${id}`;
+    const url = `${config.URL}/Invendus/${id}`;
     await fetch(url)
       .then(res => res.json())
       .then(res => {
@@ -231,7 +309,7 @@ const Dealadd = (item) => {
       })
   };
   const getPartner = async () => {
-    const url = `https://api.foodealzapi.com/restaurants`;
+    const url = `${config.URL}/restaurants`;
     await fetch(url)
       .then(res => res.json())
 
@@ -254,18 +332,18 @@ const Dealadd = (item) => {
   };
 
   const addDeal = () => {
-    axios.post(`https://api.foodealzapi.com/deals/dealcreate`, {
-      restaurant_id: parseInt(data.restaurant),
-      imageurl: dealdata.imageurl,
+    axios.post(`${config.URL}/deals/dealcreate`, {
+      restaurant_id: partenaireId,
+      imageurl: urlphoto,
       discount:dealdata.discount,
-      PriceAfterDiscount: dealdata.PriceAfterDiscount,
-      PriceBeforeDiscount: dealdata.PriceBeforeDiscount,
-      description: dealdata.description,
-      deal_description: dealdata.deal_description,
+      PriceAfterDiscount: data.fields["priceBefore"],
+      PriceBeforeDiscount: data.fields["priceAfter"],
+      description: data.fields["description"],
+      deal_description: data.fields["dealDescription"],
       startingdate: data.startingdate,
-      expireddate: data.expireddate,
-     
-      
+      expirydate: data.expireddate, 
+      startinghours: partnerstarting,
+      expiryhours: partnerexpired,
     })
       .then(() => {
         console.log("added successfully");
@@ -277,9 +355,7 @@ const Dealadd = (item) => {
 
   }
   
-    const handleClick = () => {
-      setOpen1(true);
-    };
+    
     
     const bouttonadddeal = () => {
       getPartner();
@@ -299,10 +375,11 @@ const Dealadd = (item) => {
   const global = () => {
     addDeal();
    handleClose2();
-   handleClick();
    handleClose1();
+   
 
   };
+
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -328,8 +405,8 @@ const Dealadd = (item) => {
             <FormControl  style={{marginLeft:'70px'}} variant="filled" className={classes.formControl}>
             <Select
                 native
-                value={data.partnerselected}
-                onChange={val => {ChangePartner(val.target.value)}}
+                value={partneridselected}
+                onChange ={val => ChangePartner(val.target.value)}
                 inputProps={{
                   name: 'partnerId',
                   id: 'filled-age-native-simple3',
@@ -343,7 +420,7 @@ const Dealadd = (item) => {
                 }
                 
               </Select>
-            </FormControl>-*+
+            </FormControl>
             
           </div>
           <div className={classes.ligne}>
@@ -370,34 +447,53 @@ const Dealadd = (item) => {
           </div>
            <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>image url :</p>
-            <TextField  style={{ marginLeft: '50px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="image url" onChange={e => imagechange(e.target.value)} variant="filled"  value={dealdata.imageurl}/>
+            <input
+            style={{marginLeft:"70px", marginTop:"50px"}}
+             type="file"
+              name="file"
+              placeholder="Upload an image"
+              onChange={(e) => { uploadImage(e) }}
+            />
+            {
+              loading ? (
+                <h3  style={{marginLeft:"20px", marginTop:"40px"}}>Image....</h3>
+              ) : (
+                <img src={image} style={{ width: '100px' }} />
+              )
+            }
           </div>
+
           <div className={classes.ligne}>
-            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>discount :</p>
-            <TextField  style={{ marginLeft: '50px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="discount" onChange={e => discountchange(e.target.value)} variant="filled"  value={dealdata.discount}/>
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>discount:</p>
+            <TextField  style={{ marginLeft: '60px',width: '300px',marginTop: '25px',padding: '15px'}}
+              label="discount"  value={dealdata.discount} variant="filled" />
+              {/* <span style={{color: "red"}}>{data.errors["priceAfter"]}</span> */}
           </div>
+         
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>price after:</p>
-            <TextField  style={{ marginLeft: '60px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="price after" onChange={e => afterchange(e.target.value)} variant="filled" value={dealdata.PriceAfterDiscount}/>
+            <TextField  style={{ marginLeft: '40px',width: '300px',marginTop: '25px',padding: '15px'}}
+              label="price after" name="priceAfter" onChange={(e)=> handleChangee(e.target.value,"priceAfter")} value={data.fields["priceAfter"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["priceAfter"]}</span>
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>price before :</p>
-            <TextField  style={{ marginLeft: '50px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="price before" onChange={e => beforechange(e.target.value)} variant="filled" value={dealdata.PriceBeforeDiscount}/>
+            <TextField  style={{ marginLeft: '25px',width: '300px',marginTop: '25px',padding: '15px'}}
+              label="price before" name="priceBefore" onChange={(e)=> handleChangee(e.target.value,"priceBefore")} value={data.fields["priceBefore"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["priceBefore"]}</span>
           </div>
 
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>description :</p>
-            <TextField  style={{ marginLeft: '50px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="description" onChange={e => descriptionchange(e.target.value)} variant="filled" value={dealdata.description}/>
+            <TextField  style={{ marginLeft: '30px',width: '300px',marginTop: '25px',padding: '15px'}}
+              label="description" name="description" onChange={(e)=> handleChangee(e.target.value,"description")} value={data.fields["description"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["description"]}</span>
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>deal description :</p>
-            <TextField  style={{ marginLeft: '20px',width: '300px',marginTop: '25px',padding: '15px'}}
-              label="deal description" onChange={e => dealdiscrichange(e.target.value)} variant="filled" value={dealdata.deal_description}/>
+            <TextField  style={{ width: '300px',marginTop: '25px',padding: '15px'}}
+              label="deal description" name="dealDescription" onChange={(e)=> handleChangee(e.target.value,"dealDescription")} value={data.fields["dealDescription"]} variant="filled" />
+              <span style={{color: "red"}}>{data.errors["dealDescription"]}</span>
           </div>
           <div className={classes.ligne}>
             <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }}>starting date :</p>
@@ -437,6 +533,19 @@ const Dealadd = (item) => {
               />
             </form>
           </div>
+
+          <div className={classes.ligne}>
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }} >starting hour :</p>
+            <TextField style={{ marginLeft: '20px', width: '300px', marginTop: '25px', padding: '15px' }}
+              label="starting hour" disabled variant="filled" value={partnerstarting} />
+          </div >
+
+          <div className={classes.ligne}>
+            <p style={{ fontSize: '15px', color: "#008037", fontWeight: "bold", marginTop: '50px' }} >expired hour :</p>
+            <TextField style={{ marginLeft: '20px', width: '300px', marginTop: '25px', padding: '15px' }}
+              label="expired hour" disabled variant="filled" value={partnerexpired} />
+          </div >
+
           
           
 
@@ -461,16 +570,15 @@ const Dealadd = (item) => {
           <Button onClick={handleClose2} color="primary">
             No
 </Button>
-          <Button onClick={() => global()} color="primary" >
+          <Button onClick={(e) => contactSubmit(e)} color="primary" >
             Yes
 </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar open={open1} autoHideDuration={1000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success">
-          deal is successfully added!
-</Alert>
-      </Snackbar>
+
+    
+     
+      <Snackbar open={open4} autoHideDuration={3000} onClose={handleClose4} message="There are invalid forms!" />
 
         </DialogActions>
       </Dialog>
